@@ -1,0 +1,46 @@
+body{
+    display: grid;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    grid-template-columns: 1fr 4fr;
+    grid-template-rows: 50px 1fr 30px;
+}
+
+aside{
+    background-color: burlywood;
+}
+
+nav{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    height: 50px;
+    background-color: gray;
+    align-items: center;
+    gap: 10px
+}
+
+nav > div:last-child
+{
+    margin-left: auto;
+}
+
+header{
+
+}
+
+main
+{
+    background-color: chocolate;
+}
+
+footer{
+    background-color: aquamarine;
+}
+
+.flex-ctr{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,0 +1,270 @@
+.kaider, img
+{
+    align-items: right;
+    align-self: right;
+    display: flex;
+    width: auto;
+    image-resolution:inherit;
+    max-height: fit-content;
+    margin-left: 5%;
+    max-width: 100%;
+}
+
+.push{
+    text-align: center;
+}
+
+.tableOfContents
+{
+    border: 7px;
+    border-width: 5px;
+    border-top: 4px;
+    border-right: 3px;
+    border-left: 4px;
+    border-bottom: 4px;
+    box-sizing: border-box;
+    max-width: 400px;
+    align-items: center;
+    margin: 0%;
+    translate: 490px -370px;
+    /* height: fit-content; */
+}
+
+.gamesL
+{
+    width: 50px;
+}
+
+footer{
+    width: 100%;
+}
+
+nav
+{
+    background-color: rgb(34, 0, 56);
+    color: white;
+    justify-content:center;
+    margin-top: 0px;
+    max-width: 100%;
+    padding-right: 20px;
+    /* height: 20px; */
+    padding-left: 20px;
+    display: block;
+    width: 100%;
+}
+
+body{
+    width: 100%;
+}
+
+.death
+{
+    translate: -570px -20px;
+    margin: 0%;
+    border-bottom: 0px;
+    max-height: 50px;
+    /* height: fit-content; */
+    width: 100%;
+    height: 5px;
+}
+
+.sellGames{
+    align-self: start;
+    align-items: baseline;
+    translate: -500px;
+    margin: 0%;
+    max-width: fit-content;
+    /* max-height: fit-content; */
+    height: 50px;
+}
+
+.hadk
+{
+    justify-items: stretch;
+    justify-content:space-around;
+    /* height: 30px; */
+    font-size:xx-large;
+    width: 100%;
+}
+
+.Bootlegs
+{
+    flex-wrap: nowrap;
+    padding-right: 80px;
+    padding-left: 140px;
+    justify-content: space-evenly;
+}
+
+.Hacks
+{
+    flex-wrap: nowrap;
+    padding-right: 90px;
+    padding-left: 90px;
+}
+
+.allW
+{
+    margin: 0%;
+    width: 340px; 
+    height: 200px;
+}
+
+.CoolGroups
+{
+    flex-wrap: nowrap;
+    padding-right: 80px;
+    padding-left: 80px;
+}
+
+.StardomHackers
+{
+    flex-wrap: nowrap;
+    padding-right: 80px;
+    padding-left: 80px;
+}
+
+.ad
+{
+    translate: 50px 80px;
+    text-align: center;
+    max-height: fit-content;
+}
+
+.death2
+{
+    width: 100%;
+}
+
+.desc
+{
+    display: flex;
+    flex-wrap: wrap;
+    text-align: right;
+    image-resolution:inherit;
+    width: 300px;
+    display: block;
+    height: 100px;
+    max-block-size: 10px;
+    translate: 1000px -380px;
+}
+
+body .titleCARd{
+    text-align: center;
+    width: 100%;
+    margin: 0%;
+}
+
+.border
+{
+    border-color: rgb(255, 255, 255);
+    width: fit-content;
+    max-width: 100%;
+    height: 5px
+}
+
+.contacts
+{
+    flex-wrap: nowrap;
+    padding-right: 20px;
+    padding-left: 20px;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+.contact
+{
+    flex-wrap: nowrap;
+    padding-right: 70px;
+    padding-left: 50px;
+    justify-content: space-evenly;
+}
+
+.phone
+{
+    flex-wrap: nowrap;
+    padding-right: 70px;
+    padding-left: 80px;
+    justify-content: space-evenly;
+}
+
+.Rep
+{
+    flex-wrap: nowrap;
+    padding-right: 40px;
+    padding-left: 20px;
+    justify-content: space-evenly;
+}
+
+.Buyer
+{
+    flex-wrap: nowrap;
+    padding-right: 30px;
+    padding-left: 30px;
+    justify-content: space-evenly;
+}
+
+.Discord
+{
+    flex-wrap: nowrap;
+    padding-right: 60px;
+    padding-left: 60px;
+    justify-content: space-evenly;
+}
+
+.Dev
+{
+    flex-wrap: nowrap;
+    padding-right: 90px;
+    padding-left: 80px;
+    justify-content: space-evenly;
+}
+
+html{
+    color: rgb(255, 255, 255);
+    background-color: rgb(32, 32, 36);
+    font-family: 'Lucida Sans',
+    'Lucida Sans Regular',
+    'Lucida Grande', 
+    'Lucida Sans Unicode', 
+    Geneva, Verdana, sans-serif;
+    margin: 0%;
+    width: fit-content;
+    max-width: 100%;
+    /* max-height: 100%; */
+}
+
+title{
+    align-items: center;
+}
+
+.vid{
+    translate: -55px 170px;
+    height: fit-content;
+    flex: content;
+    border: 0px;
+    margin: 0%;
+}
+
+h2{
+    text-align: center;
+}
+
+h1{
+    text-decoration: wavy;
+    flex-flow: wrap;
+    margin: 2px;
+}
+.releases
+{
+    color:cyan;
+}
+
+.Gear
+{
+    color: aquamarine;
+}
+
+.Pre-Orders
+{
+    color: azure;
+}

@@ -1,0 +1,37 @@
+html{
+    height: auto;
+    width: auto;
+    background-color: rgb(5, 2, 73);
+    color: rgb(159, 159, 159);
+}
+
+nav{
+    display: flex;
+    flex-direction: column;
+    background-color: aliceblue;
+}
+
+div{
+    font-size: 20px;
+    margin: 10px;
+    color:rgb(255, 148, 54);
+}
+
+nav > div:last-child{
+    margin-left: auto;
+}
+
+.lower-container{
+    background-color: bisque;
+    height: 100px;
+    min-width: 30vw !important;
+}
+
+.child{
+    width: 50%;
+    background-color: chartreuse;
+}
+
+div {
+    display:inline-block;
+}
