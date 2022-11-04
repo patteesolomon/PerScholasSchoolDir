@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="app.js" defer></script>
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav></nav>
+    <div class="bodyContainer">
+        <div class="mainCharacterView left" >
+                <div class="nameBox">USS Schwarzenegger</div>
+                <div class="playerImage">
+                </div>
+                <div>
+                    <input id ="z" type="button" value="Attack" onclick="atmsg()"/>
+                    <input id ="x" type="button" value="Missile" onclick="mmsg()"/>
+                    <input id ="r" type="button" value="Retreat" onclick="rmsg()"/>
+                </div>
+                
+                <div class="playerStats">
+                    <br class="Hull"> Hull : 15 </br> 
+                    <br class="FirePower"> FirePower : 5 </br>
+                    <br class="Accuracy"> Accuracy : .7 </br> 
+                </div>
+        </div>
+
+        <textarea id="log">
+        </textarea>
+
+        <div class="mainCharacterView right">
+            <div class="nameBox">Enemy</div>
+            <div class="enemyImage"></div>
+                <div class="enemyStats">
+                    <br class="eHull"> Hull : 6 </br> 
+                    <br class="eFirePower"> FirePower : 3 </br>
+                    <br class="eAccuracy"> Accuracy : .6 </br> 
+                </div>
+        </div>
+</body>
+</html>
