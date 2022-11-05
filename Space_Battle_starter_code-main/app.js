@@ -75,6 +75,10 @@ class Alien extends ACR
         this.acc = this.randA(accmax, accmin);
     }
 }
+document.getElementById('').innerText =
+`<br >Hull : ${player.hull} </br>
+<br class="">FirePower : ${player.firepower} </br>
+<br class="">Accuracy : ${player.accuracy} </br>`
 
 let meLog = document.getElementById('log');
 meLog.style.color = 'white';
