@@ -75,10 +75,11 @@ class Alien extends ACR
         this.acc = this.randA(accmax, accmin);
     }
 }
-document.getElementById('').innerText =
-`<br >Hull : ${player.hull} </br>
-<br class="">FirePower : ${player.firepower} </br>
-<br class="">Accuracy : ${player.accuracy} </br>`
+
+document.querySelector('.playerStats').innerText =
+` <br class="Hull"> : ${player.hull} </br>
+<br class="FirePower">FirePower : ${player.firepower} </br>
+<br class="Accuracy">Accuracy : ${player.accuracy} </br>`;
 
 let meLog = document.getElementById('log');
 meLog.style.color = 'white';
@@ -108,6 +109,9 @@ alienArr = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6];
         document.getElementById('z').style.display = 'block';
         document.getElementById('x').style.display = 'block';
         document.getElementById('r').style.display = 'block';
+
+        // element in here -> usl();
+
         console.log('attacking!!!');
         allydmgLog(ardx);
     }
@@ -124,6 +128,19 @@ alienArr = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6];
     function statmntLog(statement = '')
     {
         alert(`${statement}`);
+    }
+
+    function usl(cause) // user turn options
+    {
+        switch(cause)
+        {
+            case 'z':
+            break;
+            case 'r':
+            break;
+            case 'x':
+            break;
+        }
     }
 
     function pldmgLog(plDmgIn)
@@ -163,31 +180,30 @@ alienArr = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6];
 
     function hpCheck(i , ASW, alienArr)
     {
-        // hp checks
-        switch (ASW.hull)
+        // hp checks 
+        if (ASW.hull <= 0)
         {
-            case 0:
-                alert('you have died.');
-                meLog.innerText = '';
-                break;
-        
-            default:
-                console.log('your-turn');
-                playerPhase(i);
-                break;
+            alert('you have died.');
+            Console.log('you have died.');
+            meLog.innerText = 'player has died';
         }
-        switch (alienArr[i].hull) // no hp check
+        else
         {
-            case 0:
-                alert('you win.');
-                meLog.innerText = '';
-                break;
-        
-            default:
-                console.log('enemy-turn');
+            console.log('your-turn');
+            playerPhase(i);
+        }
+
+         // 
+        if (alienArr[i].hull <= 0)
+        {
+            alert('you win.');
+            meLog.innerText = '';
+        }
+        else{
+            console.log('enemy-turn');
                 enemyPhase(i);
-                break;
         }
+    
     }
 
     function battleProcessing()
@@ -198,8 +214,7 @@ alienArr = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6];
         
         for (let i = 0; i < alienArr.length - 1; i++) 
         {
-            // while(ASW.hull != 0 && alienArr[i].hull != 0)
-            // {
+            playerPhase(i);
                 if(i == alienArr.length-1 && ASW.hull != 0 && alienArr[i].hull > 0)
                 {
                     hpCheck(i, ASW, alienArr);
@@ -209,20 +224,18 @@ alienArr = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6];
                     hpCheck(i, ASW, alienArr);
                      //call check
                     console.log('Next Battle will be startedeeeeed in.');
+                    console.log();
                     hpCheck(i, ASW, alienArr);
                 }
                 else
                 {
                     break;
                 }
-            // }
             if (i == alienArr.length && ASW.hull != 0)
             {
                 console.log('You Win This War!');
-                // break;
             }
         }
-        
     }
 
 // use an ev listener todo dmgcalc
