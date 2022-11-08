@@ -6,26 +6,24 @@ class ACR
         this.firep = firep;
         this.acc = acc;
     }
-    attack(h)
-    {
-        return h; // fireP getter
-    }
-    
-    randH(hmax, hmin)
-    {
-        this.hull = Math.floor(Math.random() * (hmax - hmin + 1)) + hmin;  //3-6
-    }
-
-    randF(fmax, fmin)
-    {
-        this.firep = Math.floor(Math.random() * (fmax - fmin + 1)) + fmin; //2-4
-    }
-
-    randA(accmax, accmin)
-    {
-        this.acc = Math.floor(Math.random() * (accmax - accmin + 1)) + accmin; //0.6-0.8
-    }
 }
+
+var retreatB = false;
+
+    randH = (hmax, hmin) =>
+    {
+        return Math.floor(Math.random() * (hmax - hmin + 1)) + hmin;  //3-6
+    };
+
+    randF = (fmax, fmin) =>
+    {
+        return Math.floor(Math.random() * (fmax - fmin + 1)) + fmin; //2-4
+    };
+
+    randA = (accmax, accmin) =>
+    {
+        return Math.floor(Math.random() * (accmax - accmin + 1)) + accmin; //0.6-0.8
+    };
 
 class Ship extends ACR
 {
@@ -38,7 +36,6 @@ class Ship extends ACR
         let accmax = 0.8;
         this.name = name;
         this.miss = smiss;
-        //this.attack = this.attack.bind();
     }
 
     fireMissile()
@@ -48,6 +45,10 @@ class Ship extends ACR
     retreat() // action witout a stat?
     {
         // end game 
+        retreatB = true;
+        console.log('player has retreated..');
+        hideOptions();
+        battleProcessing();
     }
     GetName()
     {
@@ -61,66 +62,110 @@ let ASW = new Ship(3,'name'); // you can rename this later
 
 class Alien extends ACR
 {
-    constructor()
+    constructor(a, b ,c)
     {
-        super(6, 3, 0.6);
-        let hmax = 6;
-        let hmin = 3;
-        let fmax = 2;
-        let fmin = 4;
-        let accmin = 0.6;
-        let accmax = 0.8;
-        this.hull = this.randH(hmax, hmin);
-        this.firep = this.randF(fmax, fmin);
-        this.acc = this.randA(accmax, accmin);
+        super(randH(a, 3), randF(b, 3), randA(c, 0.3));
     }
 }
 
-document.querySelector('.playerStats').innerText =
-` <br class="Hull"> : ${player.hull} </br>
-<br class="FirePower">FirePower : ${player.firepower} </br>
-<br class="Accuracy">Accuracy : ${player.accuracy} </br>`;
+let hmin = 3;
+let fmax = 2;
+let fmin = 4;
+let accmin = 0.6;
+let accmax = 0.8;
+let hmax = 6;
+let alienArr1 = [
+    enemy1 = new Alien(6, 3, 0.6),
+    enemy2 = new Alien(6, 3, 0.6),
+    enemy3 = new Alien(6, 3, 0.6),
+    enemy4 = new Alien(6, 3, 0.6),
+    enemy5 = new Alien(6, 3, 0.6),
+    enemy6 = new Alien(6, 3, 0.6)
+];
+
+let alienArr = [];
+// factory req
+
+function genFactAliens()
+{
+    this.hull = this.randH(hmax, hmin);
+    this.firep = this.randF(fmax, fmin);
+    this.acc = this.randA(accmax, accmin);
+    for (let index = 0; index < 5; index++) {
+        alienArr.push(alienArr1[index]);
+    }
+}
+
+genFactAliens();
+
+var phulld = document.querySelector('.playerStats').innerText =
+`Hull: ${ASW.hull}
+FirePower: ${ASW.firep}
+Accuracy : ${ASW.acc}`;
 
 let meLog = document.getElementById('log');
 meLog.style.color = 'white';
 meLog.style.backgroundColor = 'black';
 
-//battlemode
-enemy1 = new Alien();
-enemy2 = new Alien();
-enemy3 = new Alien();
-enemy4 = new Alien();
-enemy5 = new Alien();
-enemy6 = new Alien();
+var r = document.getElementById('r');
+var z = document.getElementById('z');
+var x = document.getElementById('x');
 
-alienArr = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6];
+showOptions = () =>
+{
+    r.style.display = 'block'; 
+    z.style.display = 'block'; 
+    x.style.display = 'block';
+};
+
+hideOptions = () =>
+{
+    r.style.display = 'none'; 
+    z.style.display = 'none'; 
+    x.style.display = 'none';
+};
+
+//battlemode
 
     console.log('%c spacebattle', 'font-size: 40px');
 
-    function getCAlienHull (i) {return alienArr[i].hull;}
-    function setCAlienHull (i, seto) {alienArr[i].hull -= seto;}
     function getPlHull (ASW) {return ASW.hull;}
     function setPlHull (seto, ASW) {ASW.hull -= seto;}
 
     function playerPhase(ardx)
-    {
-        console.log('Fight(f) / Retreat(r)');
+    { 
         // wait for playerinput before calc
-        document.getElementById('z').style.display = 'block';
-        document.getElementById('x').style.display = 'block';
-        document.getElementById('r').style.display = 'block';
-
-        // element in here -> usl();
-
-        console.log('attacking!!!');
-        allydmgLog(ardx);
+        console.log('What would you like todo?');
+        showOptions();
+        console.log('Fight(f) / Retreat(r) / Missile(m)');
+        z.onclick = function () {
+            console.log('attacking!!!');
+            allydmgLog(ardx);
+            enemyPhase();
+            battleProcessing();
+        };
+        x.onclick = function () {
+            if (ASW.miss <= 0) {
+                console.log('you have no missiles.');
+                ASW.miss = 0;
+            }
+            else{
+                ASW.miss -= 1;
+                console.log('fireing missiles!!!');
+                allyM(ardx);
+                enemyPhase();
+                battleProcessing();
+            }
+        };
+        r.onclick = function () {
+            console.log('retreating!!!');
+            ASW.retreat();
+        };
     }
 
     function enemyPhase(ardx)
     {
-        document.getElementById('z').style.display = 'none';
-        document.getElementById('x').style.display = 'none';
-        document.getElementById('r').style.display = 'none';
+        hideOptions();
         console.log('Incomming Attack!');
         enemydmgLog(ardx);
     }
@@ -130,19 +175,6 @@ alienArr = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6];
         alert(`${statement}`);
     }
 
-    function usl(cause) // user turn options
-    {
-        switch(cause)
-        {
-            case 'z':
-            break;
-            case 'r':
-            break;
-            case 'x':
-            break;
-        }
-    }
-
     function pldmgLog(plDmgIn)
     {
         console.log(`%c You have done ${plDmgIn} damage`,
@@ -150,18 +182,21 @@ alienArr = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6];
         azure; border: 1px solid grey;`);
     }
 
+    
     function enemydmgLog(idx)
     {
-        if(Math.random() < alienArr[idx].acc)
+        if(Math.random() < alienArr[idx])
         {
             console.log('You have been hit!');
-            ASW.hull -= alienArr[ardx].firep;
+
+            ASW.hull -= alienArr[idx].firep;
             meLog.innerText = 'Enemy Alien attacks for : ' + alienArr[idx].firep;
         }
         else
         {
             console.log('miss!');
         }
+        console.log(alienArr);
     }
 
     function allydmgLog(idx)
@@ -178,7 +213,16 @@ alienArr = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6];
         }
     }
 
-    function hpCheck(i , ASW, alienArr)
+    function allyM(idx)
+    {
+        console.log('You hit em! NICE!');
+        alienArr[idx].hull -= ASW.fireMissile();
+        meLog.innerText = 'Player attacks for : ' + ASW.fireMissile();
+        
+        console.log('you missed!');
+    }
+
+    function hpCheck(ASW)
     {
         // hp checks 
         if (ASW.hull <= 0)
@@ -186,58 +230,68 @@ alienArr = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6];
             alert('you have died.');
             Console.log('you have died.');
             meLog.innerText = 'player has died';
+            return 0;
+        }
+        else{
+            return ASW.hull;
+        }
+    }
+
+    hpCheckE = (i , ehull) =>
+    {
+         //
+        if (ehull <= 0)
+        {
+            console.log('battle complete.');
+            meLog.innerText = 'battle complete';
+            return ehull;
         }
         else
         {
-            console.log('your-turn');
-            playerPhase(i);
+            return ehull;
         }
-
-         // 
-        if (alienArr[i].hull <= 0)
-        {
-            alert('you win.');
-            meLog.innerText = '';
-        }
-        else{
-            console.log('enemy-turn');
-                enemyPhase(i);
-        }
-    
-    }
+    };
 
     function battleProcessing()
     {
-        document.getElementById('z').style.display = 'none';
-        document.getElementById('x').style.display = 'none';
-        document.getElementById('r').style.display = 'none';
+        hideOptions();
         
-        for (let i = 0; i < alienArr.length - 1; i++) 
+        for (let i = 0; i < alienArr.length; i++) 
         {
-            playerPhase(i);
-                if(i == alienArr.length-1 && ASW.hull != 0 && alienArr[i].hull > 0)
-                {
-                    hpCheck(i, ASW, alienArr);
-                }
-                else if (alienArr[i].hull != 0)
-                {
-                    hpCheck(i, ASW, alienArr);
-                     //call check
-                    console.log('Next Battle will be startedeeeeed in.');
-                    console.log();
-                    hpCheck(i, ASW, alienArr);
-                }
-                else
-                {
-                    break;
-                }
-            if (i == alienArr.length && ASW.hull != 0)
+            if(i == alienArr.length && hpCheck(ASW) > 0 && hpCheckE(i, alienArr) > 0)
+            { // end of evangelion final battle
+                enemyPhase(i);// call this to recall stuff
+            }
+            else if (hpCheck(ASW) <= 0 && hpCheckE(i, alienArr) > 0)
             {
-                console.log('You Win This War!');
+                console.log('game over');
+                break;
+            }
+            else if (hpCheckE(i, alienArr) <= 0 && hpCheck(ASW) > 0)
+            {
+                console.log('YOU WIN!!');
+                if (i == alienArr.length && hpCheckE(i, alienArr) <= 0) {
+                    console('Cue the X credits theme');
+                    meLog.innerText = 'You Won this war!';
+                    console.log('Thank You for Playing!');
+                }
+                console.log('Next Battle!');
+                alienArr.pop();
+                battleProcessing();
+            }
+            else if(retreatB == true)
+            {
+                console.log('live to fight another day..');
+                hideOptions();
+                break;
+            }
+            else{
+                playerPhase(i);
+                break;
             }
         }
     }
 
 // use an ev listener todo dmgcalc
 
-battleProcessing(6);
+battleProcessing();
