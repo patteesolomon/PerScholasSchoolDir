@@ -33,6 +33,7 @@ class ACR
 
 var retreatB = false;
 var gameOver = false;
+var pointC = 0;
 
     randH = (hmax, hmin) =>
     {
@@ -138,47 +139,46 @@ hideOptions = () =>
     console.log('%c spacebattle', 'font-size: 40px');
 
     function getPlHull (ASW) {return ASW.hull;}
+    //function setPlHull (seto, ASW) {ASW.hull - seto;}
     function pullHull () {return Array.from(alienArr1).pop().hull;}
     function pullAcc () {return Array.from(alienArr1).pop().acc;}
     function pullFp () {return Array.from(alienArr1).pop().firep;}
 
 
-    function playerPhase(ardx)
+    function playerPhase()
     { 
         // wait for playerinput before calc
         console.log('What would you like todo?');
         showOptions();
         console.log('Fight(f) / Retreat(r) / Missile(m)');
-        z.onclick = function () {
-            console.log('attacking!!!');
-            allydmgLog();
-            enemyPhase();
-            battleProcessing();
-        };
-        x.onclick = function () {
-            if (ASW.miss <= 0) {
-                console.log('you have no missiles.');
-                ASW.miss = 0;
-            }
-            else{
-                ASW.miss -= 1;
-                console.log('fireing missiles!!!');
-                allyM();
-                enemyPhase();
-                battleProcessing();
-            }
-        };
-        r.onclick = function () {
-            console.log('retreating!!!');
-            ASW.retreat();
-        };
+            z.onclick = function() {
+                console.log('attacking!!!');
+                allydmgLog();
+            };
+            x.onclick = function() {
+                if (ASW.miss <= 0) {
+                    console.log('you have no missiles.');
+                    ASW.miss = 0;
+                }
+                else{
+                    ASW.miss -= 1;
+                    console.log('fireing missiles!!!');
+                    allyM();
+                }
+            };
+            r.onclick = function() {
+                console.log('retreating!!!');
+                ASW.retreat();
+            };
+        
     }
 
-    function enemyPhase(ardx)
+    function enemyPhase()
     {
         hideOptions();
         console.log('Incomming Attack!');
-        enemydmgLog(ardx);
+        enemydmgLog();
+        allydmgLog();
     }
 
     function statmntLog(statement = '')
@@ -193,8 +193,7 @@ hideOptions = () =>
         azure; border: 1px solid grey;`);
     }
 
-    
-    function enemydmgLog(idx)
+    function enemydmgLog()
     {
         if(Math.random() < pullAcc())
         {
@@ -229,18 +228,30 @@ hideOptions = () =>
             else{
                 console.log('battle complete.');
                 meLog.innerText = 'battle complete';
+                if(alienArr1.length <= 0)
+                {
+                    endGame();
+                }
+                else
+                {
+                    playerPhase();
+                }
+            }
+            if (ASW.hull < 0) {
+                enemyPhase();
             }
         }
         else
         {
             console.log('you missed!');
+            enemyPhase();
         }
     }
 
     function allyM()
     {
         console.log('You hit em! NICE!');
-        var s  = alienArr1.shift();
+        var s = alienArr1.shift();
         s.hull -= ASW.fireMissile();
         ASW.miss -= 1;
         if (s.hull > 0) {
@@ -283,6 +294,14 @@ hideOptions = () =>
         }
     };
 
+    function endGame()
+    {
+        console.log('Cue the X credits theme');
+                    meLog.innerText = 'You Won this war!';
+                    console.log('Thank You for Playing!');
+                    hideOptions();
+                    return;
+    }
     function battleProcessing()
     {
         hideOptions();
@@ -291,24 +310,22 @@ hideOptions = () =>
         {
             if(i ==  alienArr1.length && hpCheck(ASW) > 0 && hpCheckE() > 0)
             { // end of evangelion final battle
-                enemyPhase(i);// call this to recall stuff
+                // enemyPhase
+                enemyPhase();
             }
             else if (hpCheck(ASW) <= 0)
             {
-                console.log('game over');
+                console.log('Game Over');
                 break;
             }
             else if (hpCheckE() <= 0 && hpCheck(ASW) > 0)
             {
                 console.log('YOU WIN!!');
-                if (i ==  alienArr1.length && hpCheckE() <= 0) {
-                    console('Cue the X credits theme');
-                    meLog.innerText = 'You Won this war!';
-                    console.log('Thank You for Playing!');
+                if (alienArr1.length <= 0 ) {
+                    endGame();
                 }
                 console.log('Next Battle!');
-                //alienArr1.pop();
-                battleProcessing();
+                playerPhase();
             }
             else if(retreatB == true)
             {
@@ -317,7 +334,7 @@ hideOptions = () =>
                 break;
             }
             else{
-                playerPhase(i);
+                playerPhase();// pl phase
                 break;
             }
         }
