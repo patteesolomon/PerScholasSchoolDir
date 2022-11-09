@@ -9,6 +9,41 @@ html{
     --opc1: 200;
 }
 
+#z
+{
+    display: block;
+}
+#x
+{
+    display: block;
+}
+#c
+{
+    display: block;
+}
+#i
+{
+    display: flexbox;
+    translate: 500px;
+    padding-left: 50px;
+    padding-bottom: 10%;
+    padding-right: 50px;
+}
+#o
+{
+    display: flexbox;
+    translate: 1in;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+#p
+{
+    display: flexbox;
+    translate: 1in;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
 #logBox{
     display:flex;
     position:absolute;
