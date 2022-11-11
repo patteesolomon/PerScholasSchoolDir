@@ -52,7 +52,7 @@ function setPlATBC(PT)
 
 function playerATBCharge(PT)
 {
-    log(PT[]);
+    log(PT[11]);
 }
 
 var logMe = document.getElementById('logBox');
@@ -63,8 +63,6 @@ function log(l)
 {
     logMe.innerText += '\n' + l;
 } 
-
-log('hello world');
 
 // normal output
 outputColor('white');
@@ -84,16 +82,13 @@ var winnerChosen = false;
 var pointP1C = 0;
 var pointP2C = 0;
 
-let P1 = ACR[8]; // cust these stats
-let P2 = ACR[8]; // cust these stats
+let P1 = ACR[11]; // cust these stats
+let P2 = ACR[11]; // cust these stats
 
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
-randT = (hmax, hmin) =>
-{
-    return Math.floor(Math.random() * (hmax - hmin + 1)) + hmin;
-};
+randT = (hmax, hmin) => Math.floor(Math.random() * (hmax - hmin + 1)) + hmin;
 
 // randomizer 6 stats are set and working
 P1 = [randT(hpmax, hpmin),randT(atmax, atmin),randT(accmax, accmin),randT(dfmax, dfmin),randT(psmax, psmin),randT(stmax, stmin), randT(10, 7), randT(0, 4), 0, 1, ''];
@@ -108,6 +103,66 @@ function DecreasedATB(factor = 1)
 function setCurrentATB(newCharge)
 {
     currentATBCharge = newCharge;
+}
+
+function PsiOverEx()
+{
+    log(`${PT[11]} has died from psionic over-exersion...`);
+}
+
+function psy(PT, etherOut = 0)
+{
+    let outputOOO = 0;
+    etherOut += PT[6];
+    PT[6] -= etherOut; // cost 
+    var posDia = PT[7];
+    var negDia = PT[8];
+    var median = (posDia + negDia) / 2;
+    
+    // ether shift mitigation && // dial shift consequence
+    if (etherOut > posDia || median > posDia) 
+    {
+        negDia -= etherOut;
+        if (posDia < negDia) 
+        {
+            gameOver = true;
+        }
+    }
+    else if (etherOut < negDia || median < negDia) 
+    {
+        posDia += etherOut;
+        if (posDia > negDia) 
+        {
+            gameOver = true;
+        }
+    }
+    else if(etherOut === median)
+    {
+        outputOOO = (negDia + etherOut + posDia)* 100;
+    }
+
+    let min = Math.ceil(negDia);
+    let max = Math.floor(posDia);
+
+    if (Math.floor(Math.random() * (max - min + 1)) + etherOut > posDia || Math.floor(Math.random() * (max - min + 1)) + etherOut < negDia) 
+    {
+        gameOver = true;
+        PsiOverEx();
+    }
+    else
+    {
+        outputOOO = negDia + etherOut + posDia;
+        log(`${negDia + etherOut + posDia} = PsiDmg ouput`);
+    }
+    PT[7] = posDia;
+    PT[8] = negDia;
+    return outputOOO;
+}
+
+function attack(PT)
+{
+    var l = PT[1];
+    return l;
 }
 
 // controls
@@ -139,14 +194,16 @@ hideOptionsP2 = () =>
     p.style.display = 'none';
 };
 
-    function retreat() // action witout a stat?
-    {
-        // end game 
-        retreatB = true;
-        console.log('player has retreated..');
-        hideOptions();
-        battleProcessing();
-    }
+function retreat() // action witout a stat?
+{
+    // end game 
+    retreatB = true;
+    log('player has retreated..');
+
+    hideOptionsP1();
+    hideOptionsP2();
+    battleProcessing();
+}
 
 //setPlATBC(P1);
 
@@ -154,34 +211,39 @@ hideOptionsP2 = () =>
 
     function endGame() 
     {
-        console.log('End Theme. Cue..');
-        logMe.innerText = 'You win this war';
-        logMe.innerText = 'You have to create a new future.';
-        hideOptions();
+        hideOptionsP1();
+        hideOptionsP2();
+        log('End Theme. Cue..');
+        log('You win this war');
+        log('You have to create a new future.');
         return;
     }
 
     function actionBase(PT)
     {
-        logMe.innerText += 'Attack / Psi / Defend';
+        //log('Attack / Psi / Defend');
+        
         z.onclick = function() {
-            logMe.innerText +='attacking!!!';
+            //logMe.innerText.
+            log('attacking!!!');
             allydmgLog();
         };
         x.onclick = function() {
+            logMe.innerText.length = 0;
             if (PT[6] <= 0) {
-                logMe.innerText += 'Insufficient Ether.';
+                log('Insufficient Ether.');
                 //PT.miss = 0;
             }
             else{
                 //PT.miss -= 1;
-                logMe.innerText += 'Using Psi';
+                log('Using Psi');
                 //allyM();
             }
         };
         c.onclick = function() {
-            logMe.innerText+='defence';
-            retreat();
+            //logMe.;
+            log('defence is chosen');
+            //retreat();
         };
     }
 
@@ -190,42 +252,56 @@ hideOptionsP2 = () =>
     {  
         if (p1T == true) // player 1
         {
-            logMe.innerText += `\n`+'Player1 turn...';
+            log('Player1 turn...');
             showOptionsP1();
+            actionBase(P1);
+            return;
         }
         else if (p2T == true)// player 2
         {
-            logMe.innerText += 'Player2 turn...';
+            log('Player2 turn...');
             showOptionsP2();
+            actionBase(P2);
+            return;
         }
     }
 
+    // done
     async function coinToss()
     {
         // heads 1 beats tails 0
         //p1 cointoss
-        if (randT(0, 100) == 0)
+        if (randT(-10,10) <= 0)
         {
             p1T = false;
+            log(p1T + ' player1 goes last');
         }
-        
-        if (randT(0, 100) == 1) 
+        else if (randT(-10,10) >= 1) 
         {
             p1T = true;
+            log(p1T + ' player1 goes first');
+        }
+        else{
+            p1T = false;
+            log(p1T + ' player1 goes last');
         }
         // redo 
         //p2 cointoss
-        if (randT(0, 100) == 0)
+        if (randT(-10, 10) <= 0)
         {
             p2T = false;
+            log(p2T + ' player2 goes last');
         }
-        
-        if (randT(0, 100) == 1) 
+        else if (randT(-10,10) >= 1) 
         {
             p2T = true;
+            log(p2T + ' player2 goes first');
+        }
+        else{
+            p2T= false;
+            log(p2T + ' player2 goes last');
         }
         coinTossed = true;
-        log(`${p1T}`);
     }
     
     async function timerThf(tr, atbRate)
@@ -242,48 +318,55 @@ hideOptionsP2 = () =>
     //hideOptionsP2();
 
     async function battleProcessing()
-{
-    hideOptionsP1();
-    hideOptionsP2();
+    {
+        hideOptionsP1();
+        hideOptionsP2();
     // player coin toss
-    if (coinTossed == false) 
-    {
-        await coinToss();
-        if (p1T == true && p2T == true) 
+        if (coinTossed == false) 
         {
-            alert('retoss!');
-            coinTossed = false;
-            battleProcessing();
+            await coinToss();
+            
+            if (p1T == true && p2T == true) 
+            {
+                log('retoss!');
+                coinTossed = false;
+                p1T = null;
+                p2T = null;
+                battleProcessing();
+            }
+            else if (p1T == false && p2T == false)
+            {
+                log('retoss!');
+                coinTossed = false;
+                p1T = null;
+                p2T = null;
+                battleProcessing();
+            }
         }
-    }
-    else if(P1[0] <= 0 && P2[0] > 0)
-    {
-        // call winner 
-    }
-    else if(P2[0] <= 0 && P1[0] > 0)
-    {
-        //call winner
-    }
-    else if (p1T == true && p2T == false)
-    {
-        playerPhase();
-        timerThf(3, 1);
-        playerPhase();
-        //p1T = false; there's no reason to change this hierarchy
-    }
-    else if (p2T == true && p1T == false)
-    {
-        playerPhase();
-        timerThf(3, 1);
-        playerPhase();
-        //p2T = false; leave this here like this.
+        else if(P1[0] <= 0 && P2[0] > 0)
+        {
+            // call winner 
+        }
+        else if(P2[0] <= 0 && P1[0] > 0)
+        {
+            //call winner
+        }
+        if (p1T == true && p2T == false)
+        {
+            playerPhase();
+            // timerThf(3000, 1);
+            // playerPhase();
+            //p1T = false; there's no reason to change this hierarchy
+        }
+        else if (p2T == true && p1T == false)
+        {
+            playerPhase();
+            // timerThf(3000, 1);
+            // playerPhase();
+            //p2T = false; leave this here like this.
         // leave this alone.
+        }
+        timerThf(3000, 1); // thirty frames
     }
-    timerThf(3); // thirty frames
-}
-
-
-log('uhi');
-
 
 battleProcessing();
