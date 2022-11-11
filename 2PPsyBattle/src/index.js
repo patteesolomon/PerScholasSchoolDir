@@ -307,15 +307,49 @@ function retreat() // action witout a stat?
     async function timerThf(tr, atbRate)
     {
         timer = setInterval(()=>{
-        tr--;
-            if (tr <= 0) {
-                return;
+        
+            while (tr >= 0) {
+                tr--;
             }
         }, 1000 * atbRate);
     }
 
-    //hideOptionsP1();
-    //hideOptionsP2();
+    function allydmgLog()
+    {
+        if(Math.random() < ASW.acc)
+        {
+            console.log('You hit em! NICE!');
+            var s = alienArr1.shift();
+            s.hull -= ASW.firep;
+            meLog.innerText = 'Player attacks for : ' + ASW.firep;
+            if (s.hull > 0) 
+            {
+                alienArr1.push(s);
+            }
+            else
+            {
+                console.log('battle complete.');
+                meLog.innerText = 'battle complete';
+                if(alienArr1.length <= 0)
+                {
+                    endGame();
+                }
+                else
+                {
+                    playerPhase();
+                }
+            }
+            if (ASW.hull < 0)
+            {
+                enemyPhase();
+            }
+        }
+        else
+        {
+            console.log('you missed!');
+            enemyPhase();
+        }
+    }
 
     async function battleProcessing()
     {
