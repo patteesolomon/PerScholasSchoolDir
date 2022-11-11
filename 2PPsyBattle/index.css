@@ -1,65 +1,119 @@
 
-html{
-    font-family:fantasy, monospace, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+html
+{
+    font-family: fantasy, monospace, 
+    'Segoe UI', Tahoma, Geneva, 
+    Verdana, sans-serif;
+    color: rgb(255, 248, 205);
+    margin: 0;
+    height: 1080px;
+    width: 1920px;
+    zoom: 100%;
+    position: fixed;
 }
 
-*{
+#table
+{
+    /* player 2 */
+    flex: content;
+    position: relative;
+    translate: 830px 400px;
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+}
+
+#manuel
+{
+    /* player 1 */
+    position: relative;
+    translate: 540px 400px;
+}
+
+#canvas
+{
+    position: fixed;
+    border: 1px solid black;
+    flex:auto;
+    translate: 550px 0px;
+    zoom: 50%;
+    background-repeat: no-repeat;
+    image-rendering: auto;
+    border-style: dashed;
+    box-shadow: 5px 5px 1px 1px lightgreen ;
+    box-shadow: 1px 1px 10px 10px lightgreen ;
+    box-sizing: border-box;
+}
+
+body
+{
+    border: 0;
+    background-color: black;
+}
+
+*
+{
     margin: 0;
     padding: 0;
-    --opc1: 200;
+}
+
+#p1c
+{
+    translate: 430px 480px;
+}
+
+#p2c
+{
+    translate: 880px 460px;
 }
 
 #z
 {
-    display: block;
+    display: flexbox;
 }
+
 #x
 {
-    display: block;
+    display: flexbox;
 }
+
 #c
 {
-    display: block;
+    display: flexbox;
 }
+
 #i
 {
     display: flexbox;
-    translate: 500px;
-    padding-left: 50px;
-    padding-bottom: 10%;
-    padding-right: 50px;
 }
+
 #o
 {
     display: flexbox;
-    translate: 1in;
-    padding-left: 50px;
-    padding-right: 50px;
 }
+
 #p
 {
     display: flexbox;
-    translate: 1in;
-    padding-left: 50px;
-    padding-right: 50px;
 }
 
-#logBox{
-    display:flex;
-    position:absolute;
+#logBox
+{
+    display: flex;
+    position: fixed;
     border: 2px;
     width: 1.5in;
     bottom: 1in;
-    justify-content:center;
-    align-items:center;
+    translate: 680px 0px;
+    justify-content: center;
+    align-items: center;
     text-align: center;
     border-bottom: 4px;
     border-top: 4px;
     border-left: 4px;
+    box-shadow: 5px 5px 1px 1px rgb(26, 22, 255) ;
+    box-shadow: 1px 1px 10px 10px rgb(29, 44, 255) ;
     border-right: 4px;
-    height:auto;
+    height: 1.5in;
     color: rgb(238, 255, 248);
-    box-shadow: 0px 0px 20px 10px rgb(26, 31, 56);
-    background-color: black;
-    opacity:var(--opc1);
+    background-color: rgba(200, 200, 200, 0.284);
 }
