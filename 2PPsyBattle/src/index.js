@@ -1,9 +1,4 @@
-//var canvas = document.querySelector('canvas');
-//console.log(canvas);
-//canvas.width = window.innerWidth;
-//canvas.height = window.innerHeight;
-
-// pts for total cust, 0 - 11 properties
+// pts for total cust, 0 - 12 properties
 const ACR = 
 {
     hp: 6,
@@ -17,8 +12,14 @@ const ACR =
     neg: 0,
     maxAtbCharge: 0,
     currentATBCharge: 1,
+    phase: ['start', 'turn', 'action', 'turnEnd', 'battleEnd'],
     charN: ''
 };
+
+//var canvas = document.querySelector('canvas');
+//console.log(canvas);
+//canvas.width = window.innerWidth;
+//canvas.height = window.innerHeight;
 
 var z = document.getElementById('z');
 var x = document.getElementById('x');
@@ -52,7 +53,7 @@ function setPlATBC(PT)
 
 function playerATBCharge(PT)
 {
-    log(PT[11]);
+    PT[9] +=1;
 }
 
 var logMe = document.getElementById('logBox');
@@ -63,6 +64,15 @@ function log(l)
 {
     logMe.innerText += '\n' + l;
 } 
+
+function dLog(yu == false)
+{
+  if(yu==true)
+    logMe.style.display = 'none';
+  else{
+    logMe.style.display = 'block';
+  }
+}
 
 // normal output
 outputColor('white');
@@ -85,15 +95,14 @@ var pointP2C = 0;
 let P1 = ACR[11]; // cust these stats
 let P2 = ACR[11]; // cust these stats
 
-
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 randT = (hmax, hmin) => Math.floor(Math.random() * (hmax - hmin + 1)) + hmin;
 
 // randomizer 6 stats are set and working
-P1 = [randT(hpmax, hpmin),randT(atmax, atmin),randT(accmax, accmin),randT(dfmax, dfmin),randT(psmax, psmin),randT(stmax, stmin), randT(10, 7), randT(0, 4), 0, 1, ''];
+P1 = [randT(hpmax, hpmin),randT(atmax, atmin),randT(accmax, accmin),randT(dfmax, dfmin),randT(psmax, psmin),randT(stmax, stmin), randT(10, 7), randT(0, 4), 0, 1, [3],'' ];
 
-P2 = [randT(hpmax, hpmin),randT(atmax, atmin),randT(accmax, accmin),randT(dfmax, dfmin),randT(psmax, psmin),randT(stmax, stmin), randT(10, 7), randT(0, 4), 0, 1, ''];
+P2 = [randT(hpmax, hpmin),randT(atmax, atmin),randT(accmax, accmin),randT(dfmax, dfmin),randT(psmax, psmin),randT(stmax, stmin), randT(10, 7), randT(0, 4), 0, 1, [3],'' ];
 
 function DecreasedATB(factor = 1)
 {
@@ -105,9 +114,9 @@ function setCurrentATB(newCharge)
     currentATBCharge = newCharge;
 }
 
-function PsiOverEx()
+function PsiOverEx(PT)
 {
-    log(`${PT[11]} has died from psionic over-exersion...`);
+    log(`${PT[12]} has died from psionic over-exersion...`);
 }
 
 function psy(PT, etherOut = 0)
@@ -238,12 +247,14 @@ function retreat() // action witout a stat?
                 //PT.miss -= 1;
                 log('Using Psi');
                 //allyM();
+                logMe.style.display = 'none';
             }
         };
         c.onclick = function() {
             //logMe.;
             log('defence is chosen');
             //retreat();
+        
         };
     }
 
@@ -314,21 +325,22 @@ function retreat() // action witout a stat?
         }, 1000 * atbRate);
     }
 
-    function allydmgLog()
+    function allydmgLog(PT, T)
     {
-        if(Math.random() < ASW.acc)
+      dLog(false);
+      dLog(true);
+        if(Math.random() < PT[2])
         {
-            console.log('You hit em! NICE!');
-            var s = alienArr1.shift();
-            s.hull -= ASW.firep;
-            meLog.innerText = 'Player attacks for : ' + ASW.firep;
-            if (s.hull > 0) 
+            log('You hit em! NICE!');
+            T[0] -= PT[1];
+            log(`Player attacks for : ${PT[1]}`);
+            if (P1[0] > 0) 
             {
                 alienArr1.push(s);
             }
             else
             {
-                console.log('battle complete.');
+              log('battle complete.');
                 meLog.innerText = 'battle complete';
                 if(alienArr1.length <= 0)
                 {
@@ -339,9 +351,9 @@ function retreat() // action witout a stat?
                     playerPhase();
                 }
             }
-            if (ASW.hull < 0)
+            if (PT[0] < 0)
             {
-                enemyPhase();
+                // 
             }
         }
         else
@@ -351,7 +363,174 @@ function retreat() // action witout a stat?
         }
     }
 
-    async function battleProcessing()
+gameParty1 = [];
+gameParty2 = [];
+gameParty1[0] = P1;
+gameParty2[0] = P2;
+//party initializer
+initMembers = function() {
+   //initAtb();
+};
+
+atbMax = function()
+{
+   return 100;
+};
+
+atbFillRate = function() 
+{
+  return 1;
+};
+
+updateAtb = function(PT) {
+  //  PT[x] = find atb stat
+  PT[9] = Math.min(_atb + this.atbFillRate(), this.atbMax());
+};
+
+clearAtb = function(PT) {
+  PT[9] = 0;
+};
+
+//this function is useless
+onBattleStart = function(PT) {
+  //TH_GameBattler_onBattleStart.call(this);
+  PT[9] = 0;
+};
+
+// updater
+update = function(PT) {
+    if (!this.isBusy() && !this.updateEvent()) {
+        switch (PT[12]) {
+        case 'start':
+            startInput();
+            break;
+        case 'turn':
+            updateTurn();
+            break;
+        case 'action':
+            updateAction();
+            break;
+        case 'turnEnd':
+            updateTurnEnd();
+            break;
+        case 'battleEnd':
+            updateBattleEnd();
+            break;
+        }
+    }
+};
+
+// 
+startInput = function() {    
+  PT[12] = 'turn'
+};
+
+// added call getter
+updateTurn = function() {
+  updateFrame();
+}
+
+// the next turn
+updateFrame = function() {
+  $gameParty.updateFrame();
+  $gameTroop.updateFrame();
+};
+
+updateFrame = function() {
+  var members = members();
+  for (var i = 0; i < members.length; i++) {
+    members[i].updateFrame();
+  }
+};
+
+updateFrame = function() {
+  updateAtb();
+};
+
+drawActorAtb = function(actor, x, y, width) {
+  width = width || 186;
+  var atb = actor.atb();
+  var atbMax = actor.atbMax();
+  var color1 = hpGaugeColor1();
+  var color2 = hpGaugeColor2();
+  drawGauge(x, y, width, atb / atbMax, color1, color2);
+  changeTextColor(systemColor());
+  drawText("ATB", x, y, 44);
+};
+
+drawGaugeAreaWithTp = function(rect, actor) {    
+  this.drawActorHp(actor, rect.x + 0, rect.y, 108);
+  this.drawActorMp(actor, rect.x + 123, rect.y, 96);
+  this.drawActorAtb(actor, rect.x + 234, rect.y, 96);
+};
+
+update = function() {
+  refresh();
+}
+
+updateFrame = function() {
+  var members = this.allBattleMembers();
+  for (var i = 0; i < members.length; i++) {        
+    if (members[i].canInput()) {
+      this._subject = members[i];
+      this.startInput();
+      break;
+    }
+  }
+  if (!this._subject) {
+    $gameParty.updateFrame();
+    $gameTroop.updateFrame();    
+  }
+}
+
+startInput = function() {    
+  if (this._subject) {
+    this._subject.makeActions();
+    if (this._subject.isActor() && this._subject.canInput()) {
+      this._phase = 'input'
+    }      
+  }
+  else {
+    this._phase = 'turn'
+  }
+};
+
+updateTurn = function() {
+  this.updateFrame();
+}
+
+updateTurn = function() {    
+  if (this._subject) {
+    if (this._subject.currentAction()) {
+      this.processTurn();
+    }
+    else {
+      this.endSubjectTurn();        
+    }
+  }
+  else {
+    this.updateFrame();
+  }
+};
+
+endSubjectTurn = function() {
+  this._subject.clearAtb()
+  this._subject = null;
+};
+
+actor = function() {
+  return this._subject;
+};
+  
+selectNextCommand = function() {
+  this._phase = 'turn';
+};
+
+selectPreviousCommand = function() {
+  this._phase = 'turn';
+};
+
+async function battleProcessing()
     {
         hideOptionsP1();
         hideOptionsP2();
@@ -400,7 +579,7 @@ function retreat() // action witout a stat?
             //p2T = false; leave this here like this.
         // leave this alone.
         }
-        timerThf(3000, 1); // thirty frames
+        timerThf(300, 1); // thirty frames
     }
 
 battleProcessing();
