@@ -12,6 +12,27 @@ html
     position: fixed;
 }
 
+#posDia
+{
+    flex: content;
+    position: relative;
+    translate: 820px 470px;
+}
+
+#negDia
+{
+    flex: content;
+    position: relative;
+    translate: 290px 470px;
+}
+
+#medDia
+{
+    flex: content;
+    position: relative;
+    translate: 460px 470px;
+}
+
 #table
 {
     /* player 2 */
@@ -98,22 +119,20 @@ body
 
 #logBox
 {
-    display: flex;
+    display: flexbox;
+    flex: content;
     position: fixed;
-    border: 2px;
-    width: 1.5in;
-    bottom: 1in;
+    border: 0px;
     translate: 680px 0px;
     justify-content: center;
-    align-items: center;
-    text-align: center;
+    align-items: stretch;
+    text-align: left;
     border-bottom: 4px;
     border-top: 4px;
     border-left: 4px;
     box-shadow: 5px 5px 1px 1px rgb(26, 22, 255) ;
-    box-shadow: 1px 1px 10px 10px rgb(29, 44, 255) ;
-    border-right: 4px;
-    height: 1.5in;
+    box-shadow: 4px 4px -10px -10px rgb(29, 44, 255) ;
+    height: fit-content;
     color: rgb(238, 255, 248);
     background-color: rgba(200, 200, 200, 0.284);
 }

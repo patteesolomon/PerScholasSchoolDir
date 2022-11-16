@@ -1,19 +1,19 @@
 // pts for total cust, 0 - 12 properties
 const ACR = 
 {
-    hp: 6,
-    atk: 2,
-    acc: 0.2,
-    def: 2,
-    psi: 11,
-    sta: 2,
-    eth: 5,
-    pos: 10,
-    neg: 0,
-    maxAtbCharge: 0,
-    currentATBCharge: 1,
-    phase: ['start', 'turn', 'action', 'turnEnd', 'battleEnd'],
-    charN: ''
+    hp: 6,  // 0
+    atk: 2,// 1
+    acc: 0.2,// 2
+    def: 2,// 3
+    psi: 11,// 4
+    sta: 2,// 5
+    eth: 5,// 6
+    pos: 10,// 7
+    neg: 0,// 8
+    maxAtbCharge: 0,// 9
+    currentATBCharge: 1,// 10
+    phase: '',// 11
+    charN: '',// 12
 };
 
 //var canvas = document.querySelector('canvas');
@@ -28,6 +28,23 @@ var c = document.getElementById('c');
 var i = document.getElementById('i');
 var o = document.getElementById('o');
 var p = document.getElementById('p');
+
+var posi = document.getElementById('posDia');
+var negi = document.getElementById('negDia');
+var addm = document.getElementById('medDia');
+
+var p2El = document.getElementById('table');
+var p1El = document.getElementById('manuel');
+
+var phEnum = [
+  'start', //0 
+  'turn', // 1
+  'action',  //2
+  'turnEnd', //3
+  'battleEnd',  // 4
+  'defending', //5
+  'attacking'//6
+]; 
 
 let hpmin = 1;
 let hpmax = 7;
@@ -53,31 +70,38 @@ function setPlATBC(PT)
 
 function playerATBCharge(PT)
 {
-    PT[9] +=1;
+    PT[9] += 1;
 }
 
 var logMe = document.getElementById('logBox');
 function outputColor(idn){
     logMe.style.color = `${idn}`;
 }
+
 function log(l)
 {
     logMe.innerText += '\n' + l;
 } 
 
-function dLog(yu == false)
+function clearLog()
 {
-  if(yu==true)
+  logMe.dataset = '';
+}
+
+function dLog(yu = false)
+{
+  if(yu == true)
     logMe.style.display = 'none';
   else{
     logMe.style.display = 'block';
   }
 }
 
+hide_dials();
 // normal output
-outputColor('white');
+//outputColor('white');
 // dmg 
-//outputColor('gold');
+outputColor('gold');
 
 // dialogue
 //outputColor('blue');
@@ -99,10 +123,10 @@ const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 randT = (hmax, hmin) => Math.floor(Math.random() * (hmax - hmin + 1)) + hmin;
 
-// randomizer 6 stats are set and working
-P1 = [randT(hpmax, hpmin),randT(atmax, atmin),randT(accmax, accmin),randT(dfmax, dfmin),randT(psmax, psmin),randT(stmax, stmin), randT(10, 7), randT(0, 4), 0, 1, [3],'' ];
+// randomizer 6 stats are set and working %defaults%
+P1 = [randT(hpmax, hpmin),randT(atmax, atmin),randT(accmax, accmin),randT(dfmax, dfmin),randT(psmax, psmin),randT(stmax, stmin), randT(10, 7), randT(0, 4), 0, 1, 1,'','Manuel' ];
 
-P2 = [randT(hpmax, hpmin),randT(atmax, atmin),randT(accmax, accmin),randT(dfmax, dfmin),randT(psmax, psmin),randT(stmax, stmin), randT(10, 7), randT(0, 4), 0, 1, [3],'' ];
+P2 = [randT(hpmax, hpmin),randT(atmax, atmin),randT(accmax, accmin),randT(dfmax, dfmin),randT(psmax, psmin),randT(stmax, stmin), randT(10, 7), randT(0, 4), 0, 1, 1,'','Table' ];
 
 function DecreasedATB(factor = 1)
 {
@@ -116,11 +140,12 @@ function setCurrentATB(newCharge)
 
 function PsiOverEx(PT)
 {
-    log(`${PT[12]} has died from psionic over-exersion...`);
+    log(`${PT[12]} has suffered from psionic over-exersion...`);
 }
 
 function psy(PT, etherOut = 0)
 {
+  display_dials();
     let outputOOO = 0;
     etherOut += PT[6];
     PT[6] -= etherOut; // cost 
@@ -147,6 +172,7 @@ function psy(PT, etherOut = 0)
     }
     else if(etherOut === median)
     {
+      hide_dials();
         outputOOO = (negDia + etherOut + posDia)* 100;
     }
 
@@ -156,6 +182,7 @@ function psy(PT, etherOut = 0)
     if (Math.floor(Math.random() * (max - min + 1)) + etherOut > posDia || Math.floor(Math.random() * (max - min + 1)) + etherOut < negDia) 
     {
         gameOver = true;
+        hide_dials();
         PsiOverEx();
     }
     else
@@ -165,13 +192,36 @@ function psy(PT, etherOut = 0)
     }
     PT[7] = posDia;
     PT[8] = negDia;
+    hide_dials();
     return outputOOO;
 }
 
-function attack(PT)
+function attack(PT, T)
 {
-    var l = PT[1];
-    return l;
+    T[0] -= PT[1];
+    return PT[1]; // sending a message for output and saving time
+}
+
+function defend(PT, A)
+{
+    A -= PT[3];
+    return A; // output and call if def is chosen
+}
+
+function chargeEther(max)
+{
+  var ig = 0;
+  x.onkeydown = function () {
+    addm.textContent = `${++ig}`;
+  };
+
+  x.onkeyup = function () {
+    log(`${ig} ether has been used..`);
+    ig = 0;
+  };
+  if (max < ig) {
+    return ;
+  }
 }
 
 // controls
@@ -214,65 +264,140 @@ function retreat() // action witout a stat?
     battleProcessing();
 }
 
-//setPlATBC(P1);
-
     // await means waiting on the function in que then execution of everything else.
 
     function endGame() 
     {
+      clearLog();
+        outputColor('white');
         hideOptionsP1();
         hideOptionsP2();
         log('End Theme. Cue..');
-        log('You win this war');
         log('You have to create a new future.');
-        return;
+        log('For all psychics.');
     }
 
-    function actionBase(PT)
+
+    function display_dials()
+    {
+      posi.style.display = 'block';
+      negi.style.display = 'block';
+      addm.style.display = 'block';
+    }
+
+    function hide_dials()
+    {
+      posi.style.display = 'none';
+      negi.style.display = 'none';
+      addm.style.display = 'none';
+    }
+          
+    async function actionBase(PT, T)
     {
         //log('Attack / Psi / Defend');
-        
         z.onclick = function() {
-            //logMe.innerText.
             log('attacking!!!');
-            allydmgLog();
+            allydmgLog(PT, T);
         };
         x.onclick = function() {
-            logMe.innerText.length = 0;
+          
+            dLog(false);
+            dLog(true);
             if (PT[6] <= 0) {
                 log('Insufficient Ether.');
                 //PT.miss = 0;
             }
             else{
-                //PT.miss -= 1;
+                dLog(false);
+                log('How much...?');
+                // charge function
+                log(`dont let the 'med'`);
+                log(`go outside the blue or red`);
                 log('Using Psi');
-                //allyM();
-                logMe.style.display = 'none';
+                var maxEth = PT[6];
+                display_dials();
+                chargeEther(maxEth);
+                // calc and reduction happens here
+                psy(P1, ig);
+                dLog(false);
+                dLog(true);
             }
         };
-        c.onclick = function() {
-            //logMe.;
-            log('defence is chosen');
-            //retreat();
-        
+        c.onclick = function() 
+        {
+          log('defence is chosen');
+          // guard graphic here --<
+          PT[11] = 'defending';
+          // pre-calculated dmg output here
+          battleProcessing();
+          // <------------------------
+          //retreat();
         };
     }
 
+    function actionBase2(PT, T)
+    {
+       //log('Attack / Psi / Defend');
+      i.onclick = function() {
+        log('attacking!!!');
+        allydmgLog(PT, T);
+    };
+    o.onclick = function() {
+      
+        dLog(false);
+        dLog(true);
+        if (PT[6] <= 0) {
+            log('Insufficient Ether.');
+            //PT.miss = 0;
+        }
+        else{
+            dLog(false);
+            log('How much...?');
+            // charge function
+            log(`dont let the 'med'`);
+            log(`go outside the blue or red`);
+            log('Using Psi');
+            var ig = 0;
+            o.onkeydown = function () {
+                addm.textContent = `${++ig}`;
+            };
+
+            o.onkeyup = function () {
+                log(`${ig} ether has been used..`);
+                ig = 0;
+            };
+            // calc and reduction happens here
+            psy(P2, ig);
+            dLog(false);
+            dLog(true);
+        }
+    };
+      p.onclick = function() 
+      {
+        log('defence is chosen');
+        // guard graphic here --<
+        PT[11] = 'defending';
+        // pre-calculated dmg output here
+        battleProcessing();
+        // <------------------------
+        //retreat();
+      };
+    }
     // async battle functions
     async function playerPhase()
     {  
         if (p1T == true) // player 1
         {
-            log('Player1 turn...');
+            //log('Player1 turn...');
             showOptionsP1();
-            actionBase(P1);
+            actionBase(P1, P2);
             return;
         }
         else if (p2T == true)// player 2
         {
-            log('Player2 turn...');
+            //log('Player2 turn...');
             showOptionsP2();
-            actionBase(P2);
+            actionBase2(P2, P1);
             return;
         }
     }
@@ -309,57 +434,67 @@ function retreat() // action witout a stat?
             log(p2T + ' player2 goes first');
         }
         else{
-            p2T= false;
+            p2T = false;
             log(p2T + ' player2 goes last');
         }
         coinTossed = true;
     }
     
-    async function timerThf(tr, atbRate)
+    async function timerThf(tr)
     {
-        timer = setInterval(()=>{
-        
-            while (tr >= 0) {
-                tr--;
-            }
-        }, 1000 * atbRate);
+        setTimeout(() => {
+          log('ok');
+        },tr);
     }
+
+    endSubjectTurn = function() {
+      clearAtb();
+    };
 
     function allydmgLog(PT, T)
     {
-      dLog(false);
-      dLog(true);
-        if(Math.random() < PT[2])
-        {
+      clearLog();
+      if(Math.random() < PT[2])
+      {
             log('You hit em! NICE!');
-            T[0] -= PT[1];
-            log(`Player attacks for : ${PT[1]}`);
-            if (P1[0] > 0) 
+            hideOptionsP1();
+            hideOptionsP2();
+            setTimeout(() => 
             {
-                alienArr1.push(s);
-            }
-            else
-            {
-              log('battle complete.');
-                meLog.innerText = 'battle complete';
-                if(alienArr1.length <= 0)
+                if (T[11] == phEnum[5]) 
                 {
-                    endGame();
+                  log(`${T[12]} defends.`);
+                  log(`${PT[12]} attacks for : ${attack(defend(PT,T[1]), T)}`);
+                }
+                if (T[0] > 0) 
+                {
+                    log(`${PT[12]} attacks for : ${PT[1]}`); // leave this
+                    // play Target hurt anim
+                    battleProcessing();
                 }
                 else
                 {
-                    playerPhase();
+                log('battle complete.');
+                  if(T[0] <= 0)
+                  {
+                      endGame();
+                  }
+                  else
+                  {
+                      playerPhase();
+                  }
                 }
-            }
-            if (PT[0] < 0)
-            {
+                if (PT[0] <= 0)
+                {  
                 // 
-            }
-        }
+                  gameOver = true;
+                }
+            },1000);
+      }
         else
         {
-            console.log('you missed!');
-            enemyPhase();
+            log('you missed!');
+            battleProcessing();
         }
     }
 
@@ -368,13 +503,13 @@ gameParty2 = [];
 gameParty1[0] = P1;
 gameParty2[0] = P2;
 //party initializer
-initMembers = function() {
-   //initAtb();
-};
+// initMembers = function() {
+//     initAtb();
+// };
 
 atbMax = function()
 {
-   return 100;
+  return 100;
 };
 
 atbFillRate = function() 
@@ -384,7 +519,7 @@ atbFillRate = function()
 
 updateAtb = function(PT) {
   //  PT[x] = find atb stat
-  PT[9] = Math.min(_atb + this.atbFillRate(), this.atbMax());
+  PT[9] = Math.min(PT[10] + atbFillRate(), atbMax());
 };
 
 clearAtb = function(PT) {
@@ -399,7 +534,7 @@ onBattleStart = function(PT) {
 
 // updater
 update = function(PT) {
-    if (!this.isBusy() && !this.updateEvent()) {
+    if (PT[11] == 'busy' && !PT[11].updateEvent()) {
         switch (PT[12]) {
         case 'start':
             startInput();
@@ -422,13 +557,13 @@ update = function(PT) {
 
 // 
 startInput = function() {    
-  PT[12] = 'turn'
+  PT[12] = 'turn';
 };
 
 // added call getter
 updateTurn = function() {
   updateFrame();
-}
+};
 
 // the next turn
 updateFrame = function() {
@@ -447,88 +582,23 @@ updateFrame = function() {
   updateAtb();
 };
 
-drawActorAtb = function(actor, x, y, width) {
-  width = width || 186;
-  var atb = actor.atb();
-  var atbMax = actor.atbMax();
-  var color1 = hpGaugeColor1();
-  var color2 = hpGaugeColor2();
-  drawGauge(x, y, width, atb / atbMax, color1, color2);
-  changeTextColor(systemColor());
-  drawText("ATB", x, y, 44);
-};
+// drawActorAtb = function(actor, x, y, width) {
+//   width = width || 186;
+//   var atb = actor.atb();
+//   var atbMax = actor.atbMax();
+//   var color1 = hpGaugeColor1();
+//   var color2 = hpGaugeColor2();
+//   drawGauge(x, y, width, atb / atbMax, color1, color2);
+//   changeTextColor(systemColor());
+//   drawText("ATB", x, y, 44);
+// };
 
-drawGaugeAreaWithTp = function(rect, actor) {    
-  this.drawActorHp(actor, rect.x + 0, rect.y, 108);
-  this.drawActorMp(actor, rect.x + 123, rect.y, 96);
-  this.drawActorAtb(actor, rect.x + 234, rect.y, 96);
-};
+// drawGaugeAreaWithTp = function(rect, actor) {    
+//   this.drawActorHp(actor, rect.x + 0, rect.y, 108);
+//   this.drawActorMp(actor, rect.x + 123, rect.y, 96);
+//   this.drawActorAtb(actor, rect.x + 234, rect.y, 96);
+// };
 
-update = function() {
-  refresh();
-}
-
-updateFrame = function() {
-  var members = this.allBattleMembers();
-  for (var i = 0; i < members.length; i++) {        
-    if (members[i].canInput()) {
-      this._subject = members[i];
-      this.startInput();
-      break;
-    }
-  }
-  if (!this._subject) {
-    $gameParty.updateFrame();
-    $gameTroop.updateFrame();    
-  }
-}
-
-startInput = function() {    
-  if (this._subject) {
-    this._subject.makeActions();
-    if (this._subject.isActor() && this._subject.canInput()) {
-      this._phase = 'input'
-    }      
-  }
-  else {
-    this._phase = 'turn'
-  }
-};
-
-updateTurn = function() {
-  this.updateFrame();
-}
-
-updateTurn = function() {    
-  if (this._subject) {
-    if (this._subject.currentAction()) {
-      this.processTurn();
-    }
-    else {
-      this.endSubjectTurn();        
-    }
-  }
-  else {
-    this.updateFrame();
-  }
-};
-
-endSubjectTurn = function() {
-  this._subject.clearAtb()
-  this._subject = null;
-};
-
-actor = function() {
-  return this._subject;
-};
-  
-selectNextCommand = function() {
-  this._phase = 'turn';
-};
-
-selectPreviousCommand = function() {
-  this._phase = 'turn';
-};
 
 async function battleProcessing()
     {
@@ -566,20 +636,22 @@ async function battleProcessing()
         }
         if (p1T == true && p2T == false)
         {
-            playerPhase();
+            await playerPhase();
+            p1T = false;
             // timerThf(3000, 1);
-            // playerPhase();
+            p2T = true;
             //p1T = false; there's no reason to change this hierarchy
         }
         else if (p2T == true && p1T == false)
         {
-            playerPhase();
+            await playerPhase();
+            p1T = true;
             // timerThf(3000, 1);
-            // playerPhase();
+            p2T = false;
             //p2T = false; leave this here like this.
         // leave this alone.
         }
-        timerThf(300, 1); // thirty frames
+        //timerThf(300, 1); // thirty frames
     }
 
 battleProcessing();
