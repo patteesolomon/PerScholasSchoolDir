@@ -12,6 +12,34 @@ html
     position: fixed;
 }
 
+#P2Stats
+{
+    translate: 1300px -230px;
+}
+
+#etc2{
+    flex: auto;
+    translate: 1300px -230px;
+}
+
+#n1{
+    flex: content;
+    position: relative;
+}
+
+#n2{
+    flex: content;
+    position: relative;
+}
+
+#d2ev{
+    translate: 1300px -230px;
+}
+
+#u{
+    translate: 1300px -230px;
+}
+
 #posDia
 {
     flex: content;
@@ -29,7 +57,7 @@ html
 #medDia
 {
     flex: content;
-    position: relative;
+    position:fixed;
     translate: 460px 470px;
 }
 
@@ -53,7 +81,7 @@ html
 #canvas
 {
     position: fixed;
-    border: 1px solid black;
+    border: 1px solid rgba(206, 255, 218, 0.044);
     flex:auto;
     translate: 550px 0px;
     zoom: 50%;
@@ -123,16 +151,16 @@ body
     flex: content;
     position: fixed;
     border: 0px;
-    translate: 680px 0px;
+    translate: 680px 350px;
     justify-content: center;
     align-items: stretch;
     text-align: left;
     border-bottom: 4px;
     border-top: 4px;
     border-left: 4px;
-    box-shadow: 5px 5px 1px 1px rgb(26, 22, 255) ;
-    box-shadow: 4px 4px -10px -10px rgb(29, 44, 255) ;
+    box-shadow: 5px 5px 1px 1px lightgreen;
+    box-shadow: 4px 4px -10px -10px lightgreen;
+    background-color: rgba(127, 255, 212, 0.281);
     height: fit-content;
-    color: rgb(238, 255, 248);
-    background-color: rgba(200, 200, 200, 0.284);
+    color: rgb(161, 216, 255);
 }

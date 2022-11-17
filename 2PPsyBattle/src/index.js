@@ -10,7 +10,7 @@ const ACR =
     eth: 5,// 6
     pos: 10,// 7
     neg: 0,// 8
-    maxAtbCharge: 0,// 9
+    maxAtbCharge: 10,// 9
     currentATBCharge: 1,// 10
     phase: '',// 11
     charN: '',// 12
@@ -28,6 +28,15 @@ var c = document.getElementById('c');
 var i = document.getElementById('i');
 var o = document.getElementById('o');
 var p = document.getElementById('p');
+
+var k = document.getElementById('n1');
+var u = document.getElementById('n2');
+
+var p1L = document.getElementById('d1ev');
+var p1S = document.getElementById('P1Stats');
+
+var p2L = document.getElementById('d2ev');
+var p2S = document.getElementById('P2Stats');
 
 var posi = document.getElementById('posDia');
 var negi = document.getElementById('negDia');
@@ -51,7 +60,7 @@ let hpmax = 7;
 let atmax = 5;
 let atmin = 1;
 let accmin = 0.1;
-let accmax = 1.0;
+let accmax = 2.0;
 let dfmin = 1;
 let dfmax = 3;
 let psmin = 1;
@@ -62,6 +71,8 @@ let posmin = 1;
 let posmax = 15;
 let negmin = -15; // reversed
 let negmax = 0; // plane
+let gameOver = false;
+let turnPh = false;
 
 function setPlATBC(PT)
 {
@@ -70,7 +81,7 @@ function setPlATBC(PT)
 
 function playerATBCharge(PT)
 {
-    PT[9] += 1;
+    PT[10] += 1;
 }
 
 var logMe = document.getElementById('logBox');
@@ -85,7 +96,7 @@ function log(l)
 
 function clearLog()
 {
-  logMe.dataset = '';
+  logMe.innerText = '';
 }
 
 function dLog(yu = false)
@@ -101,15 +112,13 @@ hide_dials();
 // normal output
 //outputColor('white');
 // dmg 
-outputColor('gold');
+outputColor('rgb(238, 255, 248)');
 
 // dialogue
 //outputColor('blue');
 //outputColor('darkblue'); // noice
 
 var coinTossed = false;
-var retreatA = false;
-var retreatB = false;
 var p1T = false;
 var p2T = false;
 var winnerChosen = false;
@@ -124,9 +133,34 @@ const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 randT = (hmax, hmin) => Math.floor(Math.random() * (hmax - hmin + 1)) + hmin;
 
 // randomizer 6 stats are set and working %defaults%
-P1 = [randT(hpmax, hpmin),randT(atmax, atmin),randT(accmax, accmin),randT(dfmax, dfmin),randT(psmax, psmin),randT(stmax, stmin), randT(10, 7), randT(0, 4), 0, 1, 1,'','Manuel' ];
+P1 = [randT(hpmax, hpmin),randT(atmax, atmin),randT(accmax, accmin),randT(dfmax, dfmin),randT(psmax, psmin),randT(stmax, stmin), randT(10, 7), randT(0, 4), 0, 1, 1,'','Manuel'];
 
-P2 = [randT(hpmax, hpmin),randT(atmax, atmin),randT(accmax, accmin),randT(dfmax, dfmin),randT(psmax, psmin),randT(stmax, stmin), randT(10, 7), randT(0, 4), 0, 1, 1,'','Table' ];
+P2 = [randT(hpmax, hpmin),randT(atmax, atmin),randT(accmax, accmin),randT(dfmax, dfmin),randT(psmax, psmin),randT(stmax, stmin), randT(10, 7), randT(0, 4), 0, 1, 1,'','Table'];
+
+function displayP1Stats()
+{
+  p1S.innerHTML = `<div id="np1Hp">HP: ${P1[1]}</div>
+        <div id="np1Eth">Ether: ${P1[6]}</div>
+        <div id="np1Def">Def: ${P1[3]}</div>
+        <div id="np1Acc">Acc:${P1[2]} </div>
+        <div id="np1Atk">Atk:${P1[0]} </div>
+        <div> Psy:${P1[4]} </div>
+        <div id="np1Sta">Sta:${P1[5]} </div>`;
+}
+
+function displayP2Stats()
+{
+  p2S.innerHTML = `<div id="np2Hp">HP: ${P2[1]} </div>
+        <div id="np2Eth">Ether: ${P2[6]} </div>
+        <div id="np2Def">Def: ${P2[3]} </div>
+        <div id="np2Acc">Acc: ${P2[2]} </div>
+        <div id="np2Atk">Atk: ${P2[0]} </div>
+        <div> Psy:${P2[4]} </div>
+        <div id="np2Sta">Sta: ${P2[5]} </div>`;
+}
+
+displayP1Stats(); // works and
+displayP2Stats(); // works
 
 function DecreasedATB(factor = 1)
 {
@@ -136,6 +170,35 @@ function DecreasedATB(factor = 1)
 function setCurrentATB(newCharge)
 {
     currentATBCharge = newCharge;
+}
+
+// controls
+function showOptionsP1()
+{
+    c.style.display = 'block'; 
+    z.style.display = 'block'; 
+    x.style.display = 'block';
+}
+
+function showOptionsP2()
+{
+    i.style.display = 'block'; 
+    o.style.display = 'block'; 
+    p.style.display = 'block';
+}
+
+function hideOptionsP1()
+{
+    z.style.display = 'none'; 
+    x.style.display = 'none'; 
+    c.style.display = 'none';
+}
+
+function hideOptionsP2()
+{
+    i.style.display = 'none'; 
+    o.style.display = 'none'; 
+    p.style.display = 'none';
 }
 
 function PsiOverEx(PT)
@@ -148,7 +211,8 @@ function psy(PT, etherOut = 0)
   display_dials();
     let outputOOO = 0;
     etherOut += PT[6];
-    PT[6] -= etherOut; // cost 
+    let cost = (PT[6] / 2); // cost 
+    etherOut -= cost;
     var posDia = PT[7];
     var negDia = PT[8];
     var median = (posDia + negDia) / 2;
@@ -162,7 +226,7 @@ function psy(PT, etherOut = 0)
             gameOver = true;
         }
     }
-    else if (etherOut < negDia || median < negDia) 
+    else if (median < negDia || median < negDia) 
     {
         posDia += etherOut;
         if (posDia > negDia) 
@@ -181,9 +245,9 @@ function psy(PT, etherOut = 0)
 
     if (Math.floor(Math.random() * (max - min + 1)) + etherOut > posDia || Math.floor(Math.random() * (max - min + 1)) + etherOut < negDia) 
     {
+        PsiOverEx(PT);
         gameOver = true;
         hide_dials();
-        PsiOverEx();
     }
     else
     {
@@ -210,60 +274,31 @@ function defend(PT, A)
 
 function chargeEther(max)
 {
+  hideOptionsP1();
+  hideOptionsP2();
   var ig = 0;
-  x.onkeydown = function () {
-    addm.textContent = `${++ig}`;
+  k.onkeydown = function () {
+    k.textContent = `${++ig}`;
   };
 
-  x.onkeyup = function () {
+  k.onkeyup = function () {
     log(`${ig} ether has been used..`);
-    ig = 0;
+    return ig;
+  };
+
+  u.onkeydown = function () {
+    u.textContent = `${++ig}`;
+  };
+
+  u.onkeyup = function () {
+    log(`${ig} ether has been used..`);
+    return ig;
   };
   if (max < ig) {
-    return ;
+    return max;
   }
+  
 }
-
-// controls
-showOptionsP1 = () =>
-{
-    c.style.display = 'block'; 
-    z.style.display = 'block'; 
-    x.style.display = 'block';
-};
-
-showOptionsP2 = () =>
-{
-    i.style.display = 'block'; 
-    o.style.display = 'block'; 
-    p.style.display = 'block';
-};
-
-hideOptionsP1 = () =>
-{
-    z.style.display = 'none'; 
-    x.style.display = 'none'; 
-    c.style.display = 'none';
-};
-
-hideOptionsP2 = () =>
-{
-    i.style.display = 'none'; 
-    o.style.display = 'none'; 
-    p.style.display = 'none';
-};
-
-function retreat() // action witout a stat?
-{
-    // end game 
-    retreatB = true;
-    log('player has retreated..');
-
-    hideOptionsP1();
-    hideOptionsP2();
-    battleProcessing();
-}
-
     // await means waiting on the function in que then execution of everything else.
 
     function endGame() 
@@ -292,23 +327,19 @@ function retreat() // action witout a stat?
       addm.style.display = 'none';
     }
           
-    async function actionBase(PT, T)
+    function actionBase(PT, T)
     {
-        //log('Attack / Psi / Defend');
         z.onclick = function() {
             log('attacking!!!');
             allydmgLog(PT, T);
         };
         x.onclick = function() {
           
-            dLog(false);
-            dLog(true);
             if (PT[6] <= 0) {
                 log('Insufficient Ether.');
                 //PT.miss = 0;
             }
             else{
-                dLog(false);
                 log('How much...?');
                 // charge function
                 log(`dont let the 'med'`);
@@ -316,11 +347,8 @@ function retreat() // action witout a stat?
                 log('Using Psi');
                 var maxEth = PT[6];
                 display_dials();
-                chargeEther(maxEth);
                 // calc and reduction happens here
-                psy(P1, ig);
-                dLog(false);
-                dLog(true);
+                psy(PT, chargeEther(maxEth));
             }
         };
         c.onclick = function() 
@@ -337,39 +365,26 @@ function retreat() // action witout a stat?
 
     function actionBase2(PT, T)
     {
-       //log('Attack / Psi / Defend');
       i.onclick = function() {
         log('attacking!!!');
         allydmgLog(PT, T);
     };
     o.onclick = function() {
       
-        dLog(false);
-        dLog(true);
         if (PT[6] <= 0) {
             log('Insufficient Ether.');
             //PT.miss = 0;
         }
         else{
-            dLog(false);
             log('How much...?');
             // charge function
             log(`dont let the 'med'`);
             log(`go outside the blue or red`);
             log('Using Psi');
-            var ig = 0;
-            o.onkeydown = function () {
-                addm.textContent = `${++ig}`;
-            };
-
-            o.onkeyup = function () {
-                log(`${ig} ether has been used..`);
-                ig = 0;
-            };
+            var maxEth = PT[6];
+            display_dials();
             // calc and reduction happens here
-            psy(P2, ig);
-            dLog(false);
-            dLog(true);
+            psy(PT, chargeEther(maxEth));
         }
     };
       p.onclick = function() 
@@ -384,23 +399,6 @@ function retreat() // action witout a stat?
       };
     }
     // async battle functions
-    async function playerPhase()
-    {  
-        if (p1T == true) // player 1
-        {
-            //log('Player1 turn...');
-            showOptionsP1();
-            actionBase(P1, P2);
-            return;
-        }
-        else if (p2T == true)// player 2
-        {
-            //log('Player2 turn...');
-            showOptionsP2();
-            actionBase2(P2, P1);
-            return;
-        }
-    }
 
     // done
     async function coinToss()
@@ -440,16 +438,10 @@ function retreat() // action witout a stat?
         coinTossed = true;
     }
     
-    async function timerThf(tr)
+    function clearAtb(PT)
     {
-        setTimeout(() => {
-          log('ok');
-        },tr);
+      PT[10] = 0;
     }
-
-    endSubjectTurn = function() {
-      clearAtb();
-    };
 
     function allydmgLog(PT, T)
     {
@@ -463,7 +455,7 @@ function retreat() // action witout a stat?
             {
                 if (T[11] == phEnum[5]) 
                 {
-                  log(`${T[12]} defends.`);
+                  log(`${T[12]}` + 'defends.');
                   log(`${PT[12]} attacks for : ${attack(defend(PT,T[1]), T)}`);
                 }
                 if (T[0] > 0) 
@@ -512,75 +504,34 @@ atbMax = function()
   return 100;
 };
 
-atbFillRate = function() 
+function atbFillRate() 
 {
   return 1;
-};
+}
 
 updateAtb = function(PT) {
   //  PT[x] = find atb stat
   PT[9] = Math.min(PT[10] + atbFillRate(), atbMax());
 };
-
-clearAtb = function(PT) {
-  PT[9] = 0;
-};
-
-//this function is useless
-onBattleStart = function(PT) {
-  //TH_GameBattler_onBattleStart.call(this);
-  PT[9] = 0;
-};
-
 // updater
-update = function(PT) {
-    if (PT[11] == 'busy' && !PT[11].updateEvent()) {
-        switch (PT[12]) {
-        case 'start':
-            startInput();
-            break;
-        case 'turn':
-            updateTurn();
-            break;
-        case 'action':
-            updateAction();
-            break;
-        case 'turnEnd':
-            updateTurnEnd();
-            break;
-        case 'battleEnd':
-            updateBattleEnd();
-            break;
-        }
-    }
-};
-
-// 
-startInput = function() {    
-  PT[12] = 'turn';
-};
-
-// added call getter
-updateTurn = function() {
-  updateFrame();
-};
-
-// the next turn
-updateFrame = function() {
-  $gameParty.updateFrame();
-  $gameTroop.updateFrame();
-};
-
-updateFrame = function() {
-  var members = members();
-  for (var i = 0; i < members.length; i++) {
-    members[i].updateFrame();
-  }
-};
 
 updateFrame = function() {
   updateAtb();
 };
+
+function atbChargers()
+  {
+    while(P1[9] > P1[10] && P2[9] > P2[10])
+    {
+      if(turnPh == false)
+      {
+        break;
+      }
+      playerATBCharge(P1 * atbFillRate());
+      playerATBCharge(P2 * atbFillRate());
+    }
+  }
+
 
 // drawActorAtb = function(actor, x, y, width) {
 //   width = width || 186;
@@ -608,7 +559,8 @@ async function battleProcessing()
         if (coinTossed == false) 
         {
             await coinToss();
-            
+            battleProcessing();
+
             if (p1T == true && p2T == true) 
             {
                 log('retoss!');
@@ -626,32 +578,52 @@ async function battleProcessing()
                 battleProcessing();
             }
         }
-        else if(P1[0] <= 0 && P2[0] > 0)
-        {
-            // call winner 
-        }
-        else if(P2[0] <= 0 && P1[0] > 0)
-        {
-            //call winner
-        }
-        if (p1T == true && p2T == false)
-        {
-            await playerPhase();
-            p1T = false;
-            // timerThf(3000, 1);
-            p2T = true;
-            //p1T = false; there's no reason to change this hierarchy
-        }
-        else if (p2T == true && p1T == false)
-        {
-            await playerPhase();
-            p1T = true;
-            // timerThf(3000, 1);
-            p2T = false;
-            //p2T = false; leave this here like this.
-        // leave this alone.
-        }
-        //timerThf(300, 1); // thirty frames
+
+          if(gameOver == true)
+          { 
+            hideOptionsP1();
+            hideOptionsP2();
+          }
+          else if(P1[0] <= 0 && P2[0] > 0)
+          {
+              // call winner 
+              winnerChosen = true;
+          }
+          else if(P2[0] <= 0 && P1[0] > 0)
+          {
+              //call winner
+              winnerChosen = true;
+          }
+          if (p1T == true)
+          {
+            clearLog();
+            log('Player1 turn...');
+            log('Attack / Psi / Defend');
+            showOptionsP1();
+            //displayP1Stats();
+            actionBase(P1, P2);
+            clearAtb(P1);
+              p1T = false;
+          }
+          else if (p2T == true)
+          {
+            clearLog();
+            log('Player2 turn...');
+            log('Attack / Psi / Defend');
+            showOptionsP2();
+            //displayP2Stats();
+            actionBase2(P2, P1);
+            clearAtb(P2);
+              p2T = false;
+          }
+        
     }
 
-battleProcessing();
+    battleProcessing2()
+    {
+      // cointoss check
+      // hp check
+      // ues a switch statement
+    }
+
+//battleProcessing();
